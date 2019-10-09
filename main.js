@@ -1,5 +1,7 @@
 const Gpio = require('onoff').Gpio;
-const sensorTemperatura = new Gpio(25, 'in');
+const sensorTemperatura = new Gpio(25, 'in', 'both');
+
+console.log('Iniciou código!', sensorTemperatura);
 
 sensorTemperatura.watch((error, value) => {
   if (error) {
@@ -12,6 +14,7 @@ sensorTemperatura.watch((error, value) => {
 });
 
 unexportOnClose = () => {
+  console.log('Finalizar código!');
   sensorTemperatura.unexport();
 };
 
