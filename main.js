@@ -1,16 +1,18 @@
 const Gpio = require('onoff').Gpio;
-const sensorTemperaturaUmidade = new Gpio(18, 'in', 'both');
 const sensorLuminosidade = new Gpio(4, 'in', '');
 const button = new Gpio(17, 'in', 'both');
+const mcpadc = require('mcp-spi-adc');
 
-console.log('Iniciou código!', sensorTemperaturaUmidade);
+const tempSensor = mcpadc.open(18, { speedHz: 20000 }, err => {
+  if (err) throw err;
 
-sensorTemperaturaUmidade.watch((error, value) => {
-  if (error) {
-    console.log(error);
-  } else {
-    console.log(value);
-  }
+  setInterval(_ => {
+    tempSensor.read((err, reading) => {
+      if (err) throw err;
+
+      console.log((reading.value * 3.3 - 0.5) * 100);
+    });
+  }, 1000);
 });
 
 button.watch((error, value) => {
@@ -30,7 +32,6 @@ sensorLuminosidade.watch((error, value) => {
 });
 
 unexportOnClose = () => {
-  sensorTemperaturaUmidade.unexport();
   sensorLuminosidade.unexport();
   button.unexport();
 };
