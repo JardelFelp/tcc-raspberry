@@ -1,7 +1,7 @@
 // const Gpio = require('onoff').Gpio;
 const mcpadc = require('mcp-spi-adc');
 
-const tempSensor = mcpadc.open(5, { speedHz: 20000 }, err => {
+const tempSensor = mcpadc.openMcp3008(5, { speedHz: 20000 }, err => {
   if (err) throw err;
 
   setInterval(_ => {
@@ -16,7 +16,12 @@ const tempSensor = mcpadc.open(5, { speedHz: 20000 }, err => {
 });
 
 unexportOnClose = () => {
-  tempSensor.close();
+  tempSensor.close((err, done) => {
+    console.log('Programa encerrado');
+    console.log(
+      `Error -> ${JSON.stringify(err)} | Done -> ${JSON.stringify(done)}`
+    );
+  });
 };
 
 process.on('SIGINT', unexportOnClose); //function to run when user closes using ctrl+c
