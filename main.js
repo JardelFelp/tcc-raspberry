@@ -15,6 +15,8 @@ const tempSensor = mcpadc.open(5, { speedHz: 20000 }, err => {
   }, 2000);
 });
 
-unexportOnClose = () => {};
+unexportOnClose = () => {
+  tempSensor.close();
+};
 
 process.on('SIGINT', unexportOnClose); //function to run when user closes using ctrl+c
