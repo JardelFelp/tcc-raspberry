@@ -2,17 +2,17 @@
 const mcpadc = require('mcp-spi-adc');
 
 const tempSensor = mcpadc.open(5, { speedHz: 20000 }, err => {
-  console.log(`Erro ao iniciar -> ${JSON.stringify(err)}`);
   if (err) throw err;
 
   setInterval(_ => {
     tempSensor.read((err, reading) => {
-      console.log(`Erro ao ler -> ${JSON.stringify(err)}`);
       if (err) throw err;
 
-      console.log((reading.value * 3.3 - 0.5) * 100);
+      console.log(
+        `Value - ${reading.value} - JSON: ${JSON.stringify(reading)}`
+      );
     });
-  }, 1000);
+  }, 2000);
 });
 
 unexportOnClose = () => {};
