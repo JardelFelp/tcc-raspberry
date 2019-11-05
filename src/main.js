@@ -30,7 +30,7 @@ setInterval(async () => {
       console.error(error);
     }
   })
-}, 1000);
+}, 15000);
 
 setInterval(async () => {
   const response = await RegistroController.index();
@@ -54,4 +54,4 @@ setInterval(async () => {
       }
     );
   }
-}, 5000);
+}, 60000);
