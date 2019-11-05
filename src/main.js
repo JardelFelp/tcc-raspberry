@@ -21,20 +21,23 @@ const RegistroController = require('./controllers/RegistroController');
  */
 setInterval(async () => {
   DhtSensor.read(11, 4, (error, temperatura_ambiente, umidade_solo) => {
+    console.log(
+      `Temperatura: ${temperatura_ambiente} | Umidade: ${umidade_solo}`
+    );
     if (!error) {
-      await RegistroController.insert({
+      RegistroController.insert({
         temperatura_ambiente,
         umidade_solo
       });
     } else {
       console.error(error);
     }
-  })
+  });
 }, 15000);
 
 setInterval(async () => {
   const response = await RegistroController.index();
-  
+
   for (let chunk = 0; chunk < response.length; chunk += 10) {
     const items = response.slice(chunk, chunk + 10);
 
