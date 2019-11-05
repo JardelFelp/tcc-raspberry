@@ -1,7 +1,19 @@
 var sensor = require('node-dht-sensor');
-var Gpio = require('onoff').Gpio; //include onoff to interact with the GPIO
+const mcpadc = require('mcp-spi-adc');
 
-var umidade = new Gpio(17, 'in', 'both');
+const tempSensor = mcpadc.openMcp3008(5, { speedHz: 20000 }, err => {
+  if (err) throw err;
+
+  setInterval(_ => {
+    tempSensor.read((err, reading) => {
+      if (err) throw err;
+
+      console.log(
+        `Value - ${reading.value} - JSON: ${JSON.stringify(reading)}`
+      );
+    });
+  }, 1000);
+});
 
 setInterval(() => {
   sensor.read(11, 4, function(err, temperature, humidity) {
@@ -9,12 +21,12 @@ setInterval(() => {
       console.log(`temp: ${temperature}°C, humidity: ${humidity}%`);
     }
   });
-
-  umidade.read((err, value) => {
-    if (!err) {
-      console.log(`Umidade: ${value}`);
-    } else {
-      console.error(err);
-    }
-  });
 }, 1000);
+
+unexportOnClose = () => {
+  tempSensor.close((err, done) => {
+    console.log('Programa encerrado');
+  });
+};
+
+process.on('SIGINT', unexportOnClose); //function to run when user closes using ctrl+c
