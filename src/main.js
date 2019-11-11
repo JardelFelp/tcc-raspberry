@@ -10,8 +10,6 @@ require('dotenv').config();
 
 let RegistroController = null;
 
-iniciarSemArmazenamentoInterno();
-
 const iniciarSemArmazenamentoInterno = () => {
   setInterval(async () => {
     DhtSensor.read(11, 4, (error, temperatura_ambiente, umidade_solo) => {
@@ -105,3 +103,6 @@ const inicializarComArmazenamentoInterno = () => {
     }
   }, 60000);
 };
+
+// Chamar métodos
+iniciarSemArmazenamentoInterno();
