@@ -8,41 +8,11 @@ var DhtSensor = require('node-dht-sensor');
  */
 require('dotenv').config();
 
-Mongoose.connect('mongodb://localhost:27017/ControleEstufaLocal', {
-  useNewUrlParser: true
-});
-
-RequireDir('./models');
-
-const RegistroController = require('./controllers/RegistroController');
-
-const iniciarSemArmazenamentoInterno = () => {
-  setInterval(async () => {
-    DhtSensor.read(11, 4, (error, temperatura_ambiente, umidade_solo) => {
-      console.log(
-        `Temperatura: ${temperatura_ambiente} | Umidade: ${umidade_solo}`
-      );
-      if (!error) {
-        RegistroController.insert({
-          temperatura_ambiente,
-          umidade_solo
-        });
-      } else {
-        console.error(error);
-      }
-    });
-  }, 15000);
-};
+let RegistroController = null;
 
 iniciarSemArmazenamentoInterno();
 
-/**
- * Não utilizado no primeiro momento
- */
-const inicializarComArmazenamentoInterno = () => {
-  /**
-   * Realizar processo...
-   */
+const iniciarSemArmazenamentoInterno = () => {
   setInterval(async () => {
     DhtSensor.read(11, 4, (error, temperatura_ambiente, umidade_solo) => {
       try {
@@ -72,6 +42,40 @@ const inicializarComArmazenamentoInterno = () => {
           console.error(error);
         }
       } catch (error) {
+        console.error(error);
+      }
+    });
+  }, 15000);
+};
+
+const configurarMongoDB = () => {
+  Mongoose.connect('mongodb://localhost:27017/ControleEstufaLocal', {
+    useNewUrlParser: true
+  });
+
+  RequireDir('./models');
+
+  RegistroController = require('./controllers/RegistroController');
+};
+
+/**
+ * Não utilizado no primeiro momento
+ */
+const inicializarComArmazenamentoInterno = () => {
+  /**
+   * Realizar processo...
+   */
+  setInterval(async () => {
+    DhtSensor.read(11, 4, (error, temperatura_ambiente, umidade_solo) => {
+      console.log(
+        `Temperatura: ${temperatura_ambiente} | Umidade: ${umidade_solo}`
+      );
+      if (!error) {
+        RegistroController.insert({
+          temperatura_ambiente,
+          umidade_solo
+        });
+      } else {
         console.error(error);
       }
     });
